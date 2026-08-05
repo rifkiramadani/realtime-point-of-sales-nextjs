@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { environtment } from "@/configs/environment";
+import { environment } from "@/configs/environment";
 
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
         request,
     });
 
-    const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } = environtment;
+    const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } = environment;
 
     const supabase = createServerClient(
         SUPABASE_URL!,
