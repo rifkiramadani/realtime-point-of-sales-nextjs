@@ -13,4 +13,14 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 
+// konfigurasi eslint react hooks depencency yang tidak di butuhkan
+eslintConfig.push({
+  rules: {
+    'react-hooks/exhautive-deps': 'off', //// konfigurasi eslint react hooks depencency yang tidak di butuhkan
+    'react/jsx-key': 'off', //menonaktifkan key pada props
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': "off",
+  },
+});
+
 export default eslintConfig;
