@@ -8,7 +8,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -18,8 +17,10 @@ import {
   INITIAL_STATE_LOGIN_FORM,
 } from "@/constants/auth-constant";
 import FormInput from "@/components/common/form-input";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useEffect } from "react";
 import { login } from "../actions";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Login() {
   //instance form
@@ -34,7 +35,7 @@ export default function Login() {
   );
 
   //fungsi ketika tombol submit ditekan dan form berfungsi
-  const onSubmit = form.handleSubmit(async (data) => {
+  const onSubmit = async (data: LoginForm) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value);
@@ -42,7 +43,18 @@ export default function Login() {
     startTransition(() => {
       loginAction(formData);
     });
-  });
+  };
+
+  useEffect(() => {
+    if (loginState?.status == "error") {
+      toast.error("Login Failed", {
+        description: loginState.errors?._form?.[0],
+      });
+      startTransition(() => {
+        loginAction(null);
+      });
+    }
+  }, [loginState, loginAction]);
 
   return (
     <Card>
@@ -80,7 +92,7 @@ export default function Login() {
             Reset
           </Button>
           <Button type="submit" form="login-form">
-            Submit
+            {isPendingLogin ? <Loader2 className="animate-spin" /> : "Login"}
           </Button>
         </div>
       </CardFooter>

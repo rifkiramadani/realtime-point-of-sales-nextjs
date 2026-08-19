@@ -1,6 +1,6 @@
 export type formState = {
-    errors?: {
-        _form?: string[];
-    },
-    status?
-}
+  errors?: {
+    _form?: string[];
+  };
+  status?: string;
+};
