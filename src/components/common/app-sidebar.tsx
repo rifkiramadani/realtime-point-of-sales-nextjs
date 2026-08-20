@@ -70,6 +70,9 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   useSidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
 } from "../ui/sidebar";
 
 import {
@@ -83,11 +86,24 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Coffee, EllipsisVertical, LogOut } from "lucide-react";
+import {
+  SIDEBAR_MENU_LIST,
+  SidebarMenuKey,
+} from "@/constants/sidebar-constant";
+import { Fragment } from "react";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const AppSidebar = () => {
   const { isMobile } = useSidebar();
+  const pathname = usePathname();
+  const profile = {
+    name: "Muhammad Rifky Ramadani",
+    role: "admin",
+    avatar_url: "",
+  };
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -102,14 +118,51 @@ const AppSidebar = () => {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent className="flex flex-col gap-2">
+            <SidebarMenu>
+              {SIDEBAR_MENU_LIST[profile.role as SidebarMenuKey]?.map(
+                (item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      render={
+                        <a
+                          href={item.url}
+                          className={cn(
+                            "px-4 py-3 h-auto rounded-md flex items-center gap-3 text-base w-full",
+                            {
+                              "bg-teal-500 text-white hover:bg-teal-500 hover:text-white":
+                                pathname === item.url,
+                            },
+                          )}
+                        >
+                          {item.icon && (
+                            <item.icon className="size-5 shrink-0" />
+                          )}
+                          <span>{item.title}</span>
+                        </a>
+                      }
+                    ></SidebarMenuButton>
+                  </SidebarMenuItem>
+                ),
+              )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              {/* Triger */}
+              {/* Trigger */}
               <DropdownMenuTrigger
                 render={
-                  <SidebarMenuButton size="lg">
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-popup-open:bg-sidebar-accent data-popup-open:text-accent-foreground"
+                  >
                     <Avatar className="h-8 w-8 rounded-lg shrink-0">
                       <AvatarImage src="" alt="" />
                       <AvatarFallback className="rounded-lg">A</AvatarFallback>
