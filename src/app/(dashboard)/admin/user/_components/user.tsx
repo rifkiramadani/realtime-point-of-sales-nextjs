@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import DataTable from "@/components/common/data-table";
 import { HEADER_TABLE_USER } from "@/constants/user-constant";
 import { useMemo } from "react";
+import DropdownAction from "@/components/common/dropdown-action";
+import { Pencil, Trash2 } from "lucide-react";
 
 const UserManagement = () => {
   const supabase = createClient();
@@ -33,7 +35,35 @@ const UserManagement = () => {
 
   const filteredData = useMemo(() => {
     return (users || []).map((user, index) => {
-      return [index + 1, user.id, user.name, user.role, ""];
+      return [
+        index + 1,
+        user.id,
+        user.name,
+        user.role,
+        <DropdownAction
+          menu={[
+            {
+              label: (
+                <span className="flex items-center gap-2">
+                  <Pencil />
+                  Edit
+                </span>
+              ),
+              action: () => {},
+            },
+            {
+              label: (
+                <span className="flex items-center gap-2">
+                  <Trash2 className="text-red-400" />
+                  Delete
+                </span>
+              ),
+              variant: "destructive",
+              action: () => {},
+            },
+          ]}
+        />,
+      ];
     });
   }, [users]);
 
