@@ -93,6 +93,7 @@ import {
 import { Fragment } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { signOut } from "@/actions/auth-action";
 
 const AppSidebar = () => {
   const { isMobile } = useSidebar();
@@ -208,7 +209,7 @@ const AppSidebar = () => {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => signOut()}>
                     <LogOut />
                     Logout
                   </DropdownMenuItem>
