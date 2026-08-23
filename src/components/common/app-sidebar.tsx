@@ -90,19 +90,15 @@ import {
   SIDEBAR_MENU_LIST,
   SidebarMenuKey,
 } from "@/constants/sidebar-constant";
-import { Fragment } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/actions/auth-action";
+import { useAuthStore } from "@/stores/auth-store";
 
 const AppSidebar = () => {
   const { isMobile } = useSidebar();
   const pathname = usePathname();
-  const profile = {
-    name: "Muhammad Rifky Ramadani",
-    role: "admin",
-    avatar_url: "",
-  };
+  const profile = useAuthStore((state) => state.profile);
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -165,15 +161,20 @@ const AppSidebar = () => {
                     className="data-popup-open:bg-sidebar-accent data-popup-open:text-accent-foreground"
                   >
                     <Avatar className="h-8 w-8 rounded-lg shrink-0">
-                      <AvatarImage src="" alt="" />
-                      <AvatarFallback className="rounded-lg">A</AvatarFallback>
+                      <AvatarImage
+                        src={profile.avatar_url}
+                        alt={profile.name}
+                      />
+                      <AvatarFallback className="rounded-lg">
+                        {profile.name?.charAt(0)}
+                      </AvatarFallback>
                     </Avatar>
                     <span className="grid flex-1 min-w-0 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        Muhammad Rifky Ramadani
+                        {profile.name}
                       </span>
-                      <span className="text-muted-foreground truncate text-xs">
-                        Admin
+                      <span className="text-muted-foreground truncate text-xs capitalize">
+                        {profile.role}
                       </span>
                     </span>
                     <EllipsisVertical className="ml-auto size-4 shrink-0" />
@@ -191,17 +192,20 @@ const AppSidebar = () => {
                   <DropdownMenuLabel className="p-0 font-normal">
                     <span className="flex items-center gap-2 px-1 py-1.5">
                       <Avatar className="h-8 w-8 rounded-lg shrink-0">
-                        <AvatarImage src="" alt="" />
+                        <AvatarImage
+                          src={profile.avatar_url}
+                          alt={profile.name}
+                        />
                         <AvatarFallback className="rounded-lg">
-                          A
+                          {profile.name?.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <span className="grid flex-1 min-w-0 text-left text-sm leading-tight">
                         <span className="truncate font-semibold">
-                          Muhammad Rifky Ramadani
+                          {profile.name}
                         </span>
-                        <span className="text-muted-foreground truncate text-xs">
-                          Admin
+                        <span className="text-muted-foreground truncate text-xs capitalize">
+                          {profile.role}
                         </span>
                       </span>
                     </span>
