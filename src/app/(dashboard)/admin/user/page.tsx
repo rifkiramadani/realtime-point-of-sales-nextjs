@@ -1,9 +1,11 @@
+import UserManagement from "./_components/user";
+
+export const metadata = {
+  title: "Ignaciasz Caffe | User Management",
+};
+
 const UserManagementPage = () => {
-  return (
-    <div>
-      <h1>UserManagementPage</h1>
-    </div>
-  );
+  return <UserManagement />;
 };
 
 export default UserManagementPage;
