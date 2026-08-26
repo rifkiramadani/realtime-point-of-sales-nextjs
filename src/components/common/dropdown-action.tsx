@@ -16,6 +16,7 @@ export default function DropdownAction({
     variant?: "destructive" | "default";
     action?: () => void;
     type?: "item" | "link";
+    url?: string; // Tambahkan properti url untuk menampung tujuan link
   }[];
 }) {
   return (
@@ -36,7 +37,7 @@ export default function DropdownAction({
           <DropdownMenuItem
             key={`dropdown-action-${index}`}
             variant={item.variant || "default"}
-            render={item.type === "link"}
+            render={item.type === "link" ? <a href={item.url} /> : undefined}
             onClick={item.action}
           >
             {item.label}

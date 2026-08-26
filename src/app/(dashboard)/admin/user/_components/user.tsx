@@ -11,30 +11,33 @@ import { HEADER_TABLE_USER } from "@/constants/user-constant";
 import { useMemo } from "react";
 import DropdownAction from "@/components/common/dropdown-action";
 import { Pencil, Trash2 } from "lucide-react";
+import useDataTable from "@/hooks/use-data-table";
 
 const UserManagement = () => {
   const supabase = createClient();
-
+  const { currentPage, currentLimit, handleChangeLimit, handleChangePage } =
+    useDataTable();
   const { data: users, isLoading } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["users", currentPage, currentLimit],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const result = await supabase
         .from("profiles")
         .select("*", { count: "exact" })
+        .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
         .order("created_at");
 
-      if (error) {
+      if (result.error) {
         toast.error("Get User data failed", {
-          description: error.message,
+          description: result.error.message,
         });
-        throw new Error(error.message);
+        throw new Error(result.error.message);
       }
-      return data ?? [];
+      return result ?? [];
     },
   });
 
   const filteredData = useMemo(() => {
-    return (users || []).map((user, index) => {
+    return (users?.data || []).map((user, index) => {
       return [
         index + 1,
         user.id,
@@ -67,6 +70,12 @@ const UserManagement = () => {
     });
   }, [users]);
 
+  const totalPages = useMemo(() => {
+    return users && users.count != null
+      ? Math.ceil(users.count / currentLimit)
+      : 0;
+  }, [users, currentLimit]);
+
   return (
     <div className="w-full">
       <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
@@ -84,6 +93,11 @@ const UserManagement = () => {
         header={HEADER_TABLE_USER}
         data={filteredData}
         isLoading={isLoading}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        currentLimit={currentLimit}
+        onChangePage={handleChangePage}
+        onChangeLimit={handleChangeLimit}
       />
       {isLoading && <div>Loading...</div>}
     </div>
