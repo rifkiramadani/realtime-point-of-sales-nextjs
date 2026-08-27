@@ -15,6 +15,7 @@ import useDataTable from "@/hooks/use-data-table";
 import DialogCreateUser from "./dialog-create-user";
 import { Profile } from "@/types/auth";
 import DialogUpdateUser from "./dialog-update-user";
+import DialogDeleteUser from "./dialog-delete-user";
 
 const UserManagement = () => {
   const supabase = createClient();
@@ -57,6 +58,10 @@ const UserManagement = () => {
     type: "update" | "delete";
   } | null>();
 
+  const handleCreateSuccess = useCallback(() => {
+    setOpen(false);
+  }, []);
+
   const handleChangeAction = useCallback((open: boolean) => {
     if (!open) {
       setSelectedAction(null);
@@ -66,7 +71,7 @@ const UserManagement = () => {
   const filteredData = useMemo(() => {
     return (users?.data || []).map((user, index) => {
       return [
-        index + 1,
+        currentLimit * (currentPage - 1) + index + 1,
         user.id,
         user.name,
         user.role,
@@ -94,7 +99,12 @@ const UserManagement = () => {
                 </span>
               ),
               variant: "destructive",
-              action: () => {},
+              action: () => {
+                setSelectedAction({
+                  data: user,
+                  type: "delete",
+                });
+              },
             },
           ]}
         />,
@@ -117,13 +127,13 @@ const UserManagement = () => {
             placeholder="Search by name"
             onChange={(event) => handleChangeSearch(event.target.value)}
           />
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
             />
             <DialogCreateUser
               refetch={refetch}
-              onSuccess={() => setOpen(false)}
+              onSuccess={handleCreateSuccess}
             />
           </Dialog>
         </div>
@@ -140,6 +150,12 @@ const UserManagement = () => {
       />
       <DialogUpdateUser
         open={selectedAction !== null && selectedAction?.type === "update"}
+        refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
+      />
+      <DialogDeleteUser
+        open={selectedAction !== null && selectedAction?.type === "delete"}
         refetch={refetch}
         currentData={selectedAction?.data}
         handleChangeAction={handleChangeAction}
