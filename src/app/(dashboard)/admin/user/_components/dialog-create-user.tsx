@@ -25,6 +25,8 @@ import { toast } from "sonner";
 import { createUser } from "../actions";
 import FormSelect from "@/components/common/form-select";
 import FormImage from "@/components/common/form-image";
+import { Preview } from "@/types/general";
+import FormUser from "./form-user";
 
 const DialogCreateUser = ({
   refetch,
@@ -42,9 +44,7 @@ const DialogCreateUser = ({
   const [createUserState, createUserAction, isPendingCreateUser] =
     useActionState(createUser, INITIAL_STATE_CREATE_USER);
 
-  const [preview, setPreview] = useState<
-    { file: File; displayUrl: string } | undefined
-  >(undefined);
+  const [preview, setPreview] = useState<Preview | undefined>(undefined);
 
   //fungsi ketika tombol submit ditekan dan form berfungsi
   const onSubmit = async (data: CreateUserForm) => {
@@ -77,69 +77,14 @@ const DialogCreateUser = ({
   }, [createUserState, form, refetch, onSuccess]);
 
   return (
-    <DialogContent className="sm:max-w-[425px]">
-      <DialogHeader>
-        <DialogTitle>Create User</DialogTitle>
-        <DialogDescription>Register A New User</DialogDescription>
-      </DialogHeader>
-      <form id="create-user-form" onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4">
-          <FormInput
-            form={form}
-            name="name"
-            label="Name"
-            type="text"
-            placeholder="Insert Your Name"
-          />
-          <FormInput
-            form={form}
-            name="email"
-            label="Email"
-            type="email"
-            placeholder="Insert Your Email"
-          />
-          <FormImage
-            form={form}
-            name="avatar_url"
-            label="Avatar"
-            preview={preview}
-            setPreview={setPreview}
-          />
-          <FormSelect
-            form={form}
-            label="Role"
-            name="role"
-            selectItem={ROLE_LIST}
-          />
-          <FormInput
-            form={form}
-            name="password"
-            label="Password"
-            type="password"
-            placeholder="Insert Your Password"
-          />
-        </div>
-      </form>
-      <DialogFooter>
-        <DialogClose render={<Button variant="outline">Cancel</Button>} />
-        <div className="flex flex-row gap-3">
-          <Button
-            type="button"
-            variant={"outline"}
-            onClick={() => form.reset()}
-          >
-            Reset
-          </Button>
-          <Button type="submit" form="create-user-form">
-            {isPendingCreateUser ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              "Create"
-            )}
-          </Button>
-        </div>
-      </DialogFooter>
-    </DialogContent>
+    <FormUser
+      form={form}
+      onSubmit={form.handleSubmit(onSubmit)}
+      isLoading={isPendingCreateUser}
+      type="Create"
+      preview={preview}
+      setPreview={setPreview}
+    />
   );
 };
 
