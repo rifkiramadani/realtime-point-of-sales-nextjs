@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import DataTable from "@/components/common/data-table";
 import { HEADER_TABLE_USER } from "@/constants/user-constant";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import DropdownAction from "@/components/common/dropdown-action";
 import { Pencil, Trash2 } from "lucide-react";
 import useDataTable from "@/hooks/use-data-table";
@@ -47,6 +47,8 @@ const UserManagement = () => {
       return result ?? [];
     },
   });
+
+  const [open, setOpen] = useState(false);
 
   const filteredData = useMemo(() => {
     return (users?.data || []).map((user, index) => {
@@ -101,7 +103,10 @@ const UserManagement = () => {
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
             />
-            <DialogCreateUser refetch={refetch} />
+            <DialogCreateUser
+              refetch={refetch}
+              onSuccess={() => setOpen(false)}
+            />
           </Dialog>
         </div>
       </div>

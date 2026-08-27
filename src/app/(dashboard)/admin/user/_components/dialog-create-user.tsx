@@ -19,13 +19,20 @@ import {
 } from "@/validations/auth-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { startTransition, useActionState, useEffect } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { createUser } from "../actions";
 import FormSelect from "@/components/common/form-select";
+import FormImage from "@/components/common/form-image";
 
-const DialogCreateUser = ({ refetch }: { refetch: () => void }) => {
+const DialogCreateUser = ({
+  refetch,
+  onSuccess,
+}: {
+  refetch: () => void;
+  onSuccess?: () => void;
+}) => {
   //instance form
   const form = useForm<CreateUserForm>({
     resolver: zodResolver(createUserSchema), //panggil type dan skema form dari auth-validation.ts
@@ -35,11 +42,18 @@ const DialogCreateUser = ({ refetch }: { refetch: () => void }) => {
   const [createUserState, createUserAction, isPendingCreateUser] =
     useActionState(createUser, INITIAL_STATE_CREATE_USER);
 
+  const [preview, setPreview] = useState<
+    { file: File; displayUrl: string } | undefined
+  >(undefined);
+
   //fungsi ketika tombol submit ditekan dan form berfungsi
   const onSubmit = async (data: CreateUserForm) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
+      formData.append(
+        key,
+        key === "avatar_url" ? (preview!.file ?? "") : value,
+      );
     });
     startTransition(() => {
       createUserAction(formData);
@@ -56,10 +70,11 @@ const DialogCreateUser = ({ refetch }: { refetch: () => void }) => {
     if (createUserState?.status === "success") {
       toast.success("Create User Success");
       form.reset();
-      document.querySelector<HTMLButtonElement>('[data-state="open"]')?.click();
+      setPreview(undefined);
+      onSuccess?.();
       refetch();
     }
-  }, [createUserState, form, refetch]);
+  }, [createUserState, form, refetch, onSuccess]);
 
   return (
     <DialogContent className="sm:max-w-[425px]">
@@ -82,6 +97,13 @@ const DialogCreateUser = ({ refetch }: { refetch: () => void }) => {
             label="Email"
             type="email"
             placeholder="Insert Your Email"
+          />
+          <FormImage
+            form={form}
+            name="avatar_url"
+            label="Avatar"
+            preview={preview}
+            setPreview={setPreview}
           />
           <FormSelect
             form={form}
