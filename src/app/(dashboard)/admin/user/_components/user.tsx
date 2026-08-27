@@ -8,11 +8,13 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import DataTable from "@/components/common/data-table";
 import { HEADER_TABLE_USER } from "@/constants/user-constant";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DropdownAction from "@/components/common/dropdown-action";
 import { Pencil, Trash2 } from "lucide-react";
 import useDataTable from "@/hooks/use-data-table";
 import DialogCreateUser from "./dialog-create-user";
+import { Profile } from "@/types/auth";
+import DialogUpdateUser from "./dialog-update-user";
 
 const UserManagement = () => {
   const supabase = createClient();
@@ -50,6 +52,17 @@ const UserManagement = () => {
 
   const [open, setOpen] = useState(false);
 
+  const [selectedAction, setSelectedAction] = useState<{
+    data: Profile;
+    type: "update" | "delete";
+  } | null>();
+
+  const handleChangeAction = useCallback((open: boolean) => {
+    if (!open) {
+      setSelectedAction(null);
+    }
+  }, []);
+
   const filteredData = useMemo(() => {
     return (users?.data || []).map((user, index) => {
       return [
@@ -66,7 +79,12 @@ const UserManagement = () => {
                   Edit
                 </span>
               ),
-              action: () => {},
+              action: () => {
+                setSelectedAction({
+                  data: user,
+                  type: "update",
+                });
+              },
             },
             {
               label: (
@@ -120,7 +138,12 @@ const UserManagement = () => {
         onChangePage={handleChangePage}
         onChangeLimit={handleChangeLimit}
       />
-      {isLoading && <div>Loading...</div>}
+      <DialogUpdateUser
+        open={selectedAction !== null && selectedAction?.type === "update"}
+        refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
+      />
     </div>
   );
 };
