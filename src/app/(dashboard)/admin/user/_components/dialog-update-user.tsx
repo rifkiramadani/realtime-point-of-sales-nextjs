@@ -88,7 +88,7 @@ const DialogUpdateUser = ({
     <Dialog open={open} onOpenChange={handleChangeAction}>
       <FormUser
         form={form}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={onSubmit}
         isLoading={isPendingUpdateUser}
         type="Update"
         preview={preview}
