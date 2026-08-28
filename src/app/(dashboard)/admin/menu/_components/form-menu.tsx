@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ROLE_LIST } from "@/constants/auth-constant";
+import { AVAILABILITY_LIST, CATEGORY_LIST } from "@/constants/menu-constants";
 import { Preview } from "@/types/general";
 import { Loader2 } from "lucide-react";
 import {
@@ -20,7 +20,7 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 
-export default function FormUser<T extends FieldValues>({
+export default function FormMenu<T extends FieldValues>({
   form,
   onSubmit,
   isLoading,
@@ -36,53 +36,66 @@ export default function FormUser<T extends FieldValues>({
   setPreview: (preview: Preview | undefined) => void;
 }) {
   return (
-    <DialogContent className="sm:max-w-[425px]">
+    <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
       <DialogHeader>
-        <DialogTitle>{type} User</DialogTitle>
+        <DialogTitle>{type} Menu</DialogTitle>
         <DialogDescription>
-          {type === "Create" ? "Register A New User" : "Make Changes User Here"}
+          {type === "Create" ? "Add a New Menu" : "Make Changes Menu Here"}
         </DialogDescription>
       </DialogHeader>
-      <form id="create-user-form" onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4">
+      <form
+        id="create-user-form"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
+      >
+        <div className="flex flex-col gap-4 max-h-[50vh] overflow-y-auto">
           <FormInput
             form={form}
             name={"name" as Path<T>}
             label="Name"
             type="text"
-            placeholder="Insert Your Name"
+            placeholder="Insert Name Here"
           />
-          {type === "Create" && (
-            <FormInput
-              form={form}
-              name={"email" as Path<T>}
-              label="Email"
-              type="email"
-              placeholder="Insert Your Email"
-            />
-          )}
+          <FormInput
+            form={form}
+            name={"description" as Path<T>}
+            label="Description"
+            type="textarea"
+            placeholder="Insert Description Here"
+          />
+          <FormSelect
+            form={form}
+            name={"category" as Path<T>}
+            label="Category"
+            selectItem={CATEGORY_LIST}
+          />
+          <FormInput
+            form={form}
+            name={"price" as Path<T>}
+            label="Price"
+            type="number"
+            placeholder="Insert Price Here"
+          />
+          <FormInput
+            form={form}
+            name={"discount" as Path<T>}
+            label="Discount"
+            type="number"
+            placeholder="Insert Discount Here"
+          />
           <FormImage
             form={form}
-            name={"avatar_url" as Path<T>}
-            label="Avatar"
+            name={"image_url" as Path<T>}
+            label="Image"
             preview={preview}
             setPreview={setPreview}
           />
           <FormSelect
             form={form}
-            name={"role" as Path<T>}
-            label="Role"
-            selectItem={ROLE_LIST}
+            name={"is_available" as Path<T>}
+            label="Availability"
+            selectItem={AVAILABILITY_LIST}
           />
-          {type === "Create" && (
-            <FormInput
-              form={form}
-              name={"password" as Path<T>}
-              label="Password"
-              type="password"
-              placeholder="Insert Your Password"
-            />
-          )}
         </div>
       </form>
       <DialogFooter>

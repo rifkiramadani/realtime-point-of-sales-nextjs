@@ -10,8 +10,17 @@ const nextConfig: NextConfig = {
 
   devIndicators: false,
   images: {
-    domains: ["https://pjkpahtbzupvrnazvhas.supabase.co"],
+    domains: [
+      "https://pjkpahtbzupvrnazvhas.storage.supabase.co",
+      "https://pjkpahtbzupvrnazvhas.supabase.co",
+    ],
     remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "pjkpahtbzupvrnazvhas.storage.supabase.co",
+        port: "",
+        pathname: "/**",
+      },
       {
         protocol: "https",
         hostname: "pjkpahtbzupvrnazvhas.supabase.co",

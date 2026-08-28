@@ -30,7 +30,7 @@ export default function FormSelect<T extends FieldValues>({
         return (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor={label}>{label}</FieldLabel>
-            <Select {...rest} onValueChange={onChange}>
+            <Select {...rest} items={selectItem} onValueChange={onChange}>
               <SelectTrigger
                 className={cn("w-full capitalize", {
                   "border-red-500": form.formState.errors[name]?.message,

@@ -65,7 +65,7 @@ const DialogCreateUser = ({
   return (
     <FormUser
       form={form}
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={onSubmit}
       isLoading={isPendingCreateUser}
       type="Create"
       preview={preview}

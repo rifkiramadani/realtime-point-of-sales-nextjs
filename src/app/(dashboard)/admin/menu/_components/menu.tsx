@@ -15,6 +15,7 @@ import { Menu } from "@/validations/menu-validation";
 import Image from "next/image";
 import { cn, convertIDR } from "@/lib/utils";
 import { HEADER_TABLE_MENU } from "@/constants/menu-constants";
+import DialogCreateMenu from "./dialog-create-menu";
 
 const MenuManagement = () => {
   const supabase = createClient();
@@ -84,7 +85,7 @@ const MenuManagement = () => {
             alt={menu.name}
             width={40}
             height={40}
-            className="rounded"
+            className="rounded w-10 h-10 object-cover"
           />
           {menu.name}
         </div>,
@@ -161,10 +162,10 @@ const MenuManagement = () => {
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
             />
-            {/* <DialogCreateUser
+            <DialogCreateMenu
               refetch={refetch}
               onSuccess={handleCreateSuccess}
-            /> */}
+            />
           </Dialog>
         </div>
       </div>

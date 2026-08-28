@@ -3,12 +3,13 @@
 import { deleteFile, uploadFile } from "@/actions/storage-action";
 import { createClient } from "@/lib/supabase/server";
 import { AuthFormState } from "@/types/auth";
+import { MenuFormState } from "@/types/menu";
 import {
   createUserSchema,
   updateUserSchema,
 } from "@/validations/auth-validation";
 
-export async function createUser(prevState: AuthFormState, formData: FormData) {
+export async function createUser(prevState: MenuFormState, formData: FormData) {
   let validatedFields = createUserSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
