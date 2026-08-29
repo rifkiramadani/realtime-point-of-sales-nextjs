@@ -14,6 +14,7 @@ import useDataTable from "@/hooks/use-data-table";
 import { cn } from "@/lib/utils";
 import { Table } from "@/validations/table-validation";
 import { HEADER_TABLE_TABLE } from "@/constants/table-constant";
+import DialogCreateTable from "./dialog-create-table";
 
 const TableManagement = () => {
   const supabase = createClient();
@@ -143,15 +144,15 @@ const TableManagement = () => {
             placeholder="Search by name, capacity and status"
             onChange={(event) => handleChangeSearch(event.target.value)}
           />
-          {/* <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
             />
-            <DialogCreateMenu
+            <DialogCreateTable
               refetch={refetch}
               onSuccess={handleCreateSuccess}
             />
-          </Dialog> */}
+          </Dialog>
         </div>
       </div>
       <DataTable
