@@ -14,6 +14,8 @@ import useDataTable from "@/hooks/use-data-table";
 import { cn } from "@/lib/utils";
 import { Table } from "@/validations/table-validation";
 import { HEADER_TABLE_ORDER } from "@/constants/order-constant";
+import DialogCreateOrder from "./dialog-create-order";
+import { Order } from "@/validations/order-validation";
 
 const OrderManagement = () => {
   const supabase = createClient();
@@ -62,6 +64,19 @@ const OrderManagement = () => {
   });
 
   const [open, setOpen] = useState(false);
+
+  const { data: tables, refetch: refetchTables } = useQuery({
+    queryKey: ["tables"],
+    queryFn: async () => {
+      const result = await supabase
+        .from("tables")
+        .select("*")
+        .order("created_at")
+        .order("status");
+
+      return result.data;
+    },
+  });
 
   const [selectedAction, setSelectedAction] = useState<{
     data: Order;
@@ -148,15 +163,16 @@ const OrderManagement = () => {
             placeholder="Search..."
             onChange={(event) => handleChangeSearch(event.target.value)}
           />
-          {/* <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
             />
-            <DialogCreateTable
+            <DialogCreateOrder
               refetch={refetch}
               onSuccess={handleCreateSuccess}
+              tables={tables}
             />
-          </Dialog> */}
+          </Dialog>
         </div>
       </div>
       <DataTable

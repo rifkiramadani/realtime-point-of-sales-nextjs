@@ -1,5 +1,5 @@
 import { Controller, FieldValues, Path, UseFormReturn } from "react-hook-form";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -54,6 +54,7 @@ export default function FormSelect<T extends FieldValues>({
                 </SelectGroup>
               </SelectContent>
             </Select>
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         );
       }}
