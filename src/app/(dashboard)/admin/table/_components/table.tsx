@@ -16,6 +16,7 @@ import { Table } from "@/validations/table-validation";
 import { HEADER_TABLE_TABLE } from "@/constants/table-constant";
 import DialogCreateTable from "./dialog-create-table";
 import DialogUpdateTable from "./dialog-update-table";
+import DialogDeleteTable from "./dialog-delete-table";
 
 const TableManagement = () => {
   const supabase = createClient();
@@ -42,7 +43,7 @@ const TableManagement = () => {
 
       if (currentSearch) {
         query.or(
-          `name.ilike.%${currentSearch}%,capacity.ilike.%${currentSearch}%,status.ilike.%${currentSearch}%`,
+          `name.ilike.%${currentSearch}%,description.ilike.%${currentSearch}%,status.ilike.%${currentSearch}%`,
         );
       }
 
@@ -142,7 +143,7 @@ const TableManagement = () => {
         <h1 className="text-2xl font-bold">Table Management</h1>
         <div className="flex gap-2">
           <Input
-            placeholder="Search by name, capacity and status"
+            placeholder="Search..."
             onChange={(event) => handleChangeSearch(event.target.value)}
           />
           <Dialog open={open} onOpenChange={setOpen}>
@@ -172,12 +173,12 @@ const TableManagement = () => {
         currentData={selectedAction?.data}
         handleChangeAction={handleChangeAction}
       />
-      {/* <DialogDeleteMenu
+      <DialogDeleteTable
         open={selectedAction !== null && selectedAction?.type === "delete"}
         refetch={refetch}
         currentData={selectedAction?.data}
         handleChangeAction={handleChangeAction}
-      /> */}
+      />
     </div>
   );
 };

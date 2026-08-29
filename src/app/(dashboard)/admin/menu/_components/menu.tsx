@@ -157,7 +157,7 @@ const MenuManagement = () => {
         <h1 className="text-2xl font-bold">Menu Management</h1>
         <div className="flex gap-2">
           <Input
-            placeholder="Search by name or category"
+            placeholder="Search..."
             onChange={(event) => handleChangeSearch(event.target.value)}
           />
           <Dialog open={open} onOpenChange={setOpen}>
