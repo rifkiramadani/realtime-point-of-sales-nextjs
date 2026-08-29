@@ -7,15 +7,29 @@ import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import DataTable from "@/components/common/data-table";
-import { useCallback, useMemo, useState } from "react";
+import {
+  startTransition,
+  useActionState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import DropdownAction from "@/components/common/dropdown-action";
-import { Pencil, Trash2 } from "lucide-react";
+import { Ban, Link2Icon, Pencil, ScrollText, Trash2 } from "lucide-react";
 import useDataTable from "@/hooks/use-data-table";
 import { cn } from "@/lib/utils";
 import { Table } from "@/validations/table-validation";
-import { HEADER_TABLE_ORDER } from "@/constants/order-constant";
+import {
+  HEADER_TABLE_ORDER,
+  INITIAL_STATE_ORDER,
+} from "@/constants/order-constant";
 import DialogCreateOrder from "./dialog-create-order";
 import { Order } from "@/validations/order-validation";
+import { string } from "zod";
+import { updateReservation } from "../actions";
+import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
+import Link from "next/link";
 
 const OrderManagement = () => {
   const supabase = createClient();
@@ -93,6 +107,77 @@ const OrderManagement = () => {
     }
   }, []);
 
+  const totalPages = useMemo(() => {
+    return orders && orders.count != null
+      ? Math.ceil(orders.count / currentLimit)
+      : 0;
+  }, [orders, currentLimit]);
+
+  const [reservedState, reservedAction] = useActionState(
+    updateReservation,
+    INITIAL_STATE_ACTION,
+  );
+
+  const handleReservation = async ({
+    id,
+    table_id,
+    status,
+  }: {
+    id: string;
+    table_id: string;
+    status: string;
+  }) => {
+    const formData = new FormData();
+    Object.entries({ id, table_id, status }).forEach(([Key, value]) => {
+      formData.append(Key, value);
+    });
+    startTransition(() => {
+      reservedAction(formData);
+    });
+  };
+
+  useEffect(() => {
+    if (reservedState?.status == "error") {
+      toast.error("Update Reservation Failed", {
+        description: reservedState.errors?._form?.[0],
+      });
+    }
+
+    if (reservedState?.status === "success") {
+      toast.success("Update Reservation Success");
+      refetch();
+      refetchTables();
+    }
+  }, [reservedState, refetch, refetchTables]);
+
+  const reservedActionList = useMemo(
+    () => [
+      {
+        label: (
+          <span className="flex items-center gap-2">
+            <Link2Icon />
+            Process
+          </span>
+        ),
+        action: (id: string, table_id: string) => {
+          handleReservation({ id, table_id, status: "process" });
+        },
+      },
+      {
+        label: (
+          <span className="flex items-center gap-2">
+            <Ban className="text-red-500" />
+            Cancel
+          </span>
+        ),
+        action: (id: string, table_id: string) => {
+          handleReservation({ id, table_id, status: "canceled" });
+        },
+      },
+    ],
+    [],
+  );
+
   const filteredData = useMemo(() => {
     return (orders?.data || []).map((order, index) => {
       return [
@@ -111,48 +196,35 @@ const OrderManagement = () => {
           {order.status}
         </div>,
         <DropdownAction
-          menu={[]}
-          //   menu={[
-          //     {
-          //       label: (
-          //         <span className="flex items-center gap-2">
-          //           <Pencil />
-          //           Edit
-          //         </span>
-          //       ),
-          //       action: () => {
-          //         setSelectedAction({
-          //           data: table,
-          //           type: "update",
-          //         });
-          //       },
-          //     },
-          //     {
-          //       label: (
-          //         <span className="flex items-center gap-2">
-          //           <Trash2 className="text-red-400" />
-          //           Delete
-          //         </span>
-          //       ),
-          //       variant: "destructive",
-          //       action: () => {
-          //         setSelectedAction({
-          //           data: table,
-          //           type: "delete",
-          //         });
-          //       },
-          //     },
-          //   ]}
+          menu={
+            order.status === "reserved"
+              ? reservedActionList.map((item) => ({
+                  label: item.label,
+                  action: () =>
+                    item.action(
+                      order.id,
+                      (order.tables as unknown as { id: string }).id,
+                    ),
+                }))
+              : [
+                  {
+                    label: (
+                      <Link
+                        href={`/order/${order.order_id}`}
+                        className="flex items-center gap-2"
+                      >
+                        <ScrollText />
+                        Detail
+                      </Link>
+                    ),
+                    type: "link",
+                  },
+                ]
+          }
         />,
       ];
     });
-  }, [orders, currentLimit, currentPage]);
-
-  const totalPages = useMemo(() => {
-    return orders && orders.count != null
-      ? Math.ceil(orders.count / currentLimit)
-      : 0;
-  }, [orders, currentLimit]);
+  }, [orders, currentLimit, currentPage, reservedActionList]);
 
   return (
     <div className="w-full">
