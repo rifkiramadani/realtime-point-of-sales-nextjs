@@ -209,15 +209,13 @@ const OrderManagement = () => {
               : [
                   {
                     label: (
-                      <Link
-                        href={`/order/${order.order_id}`}
-                        className="flex items-center gap-2"
-                      >
+                      <span className="flex items-center gap-2">
                         <ScrollText />
                         Detail
-                      </Link>
+                      </span>
                     ),
                     type: "link",
+                    url: `/order/${order.order_id}`,
                   },
                 ]
           }
