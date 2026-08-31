@@ -2,8 +2,9 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { FormState } from "@/types/general";
-import { OrderFormState } from "@/types/order";
+import { Cart, OrderFormState } from "@/types/order";
 import { orderFormSchema } from "@/validations/order-validation";
+import { redirect } from "next/navigation";
 
 export async function createOrder(
   prevState: OrderFormState,
@@ -111,4 +112,32 @@ export async function updateReservation(
   return {
     status: "success",
   };
+}
+
+export async function addOrderItem(
+  prevState: OrderFormState,
+  data: {
+    order_id: string;
+    items: Cart[];
+  },
+) {
+  const supabase = await createClient();
+
+  const payload = data.items.map(({ total, menu, ...item }) => item);
+
+  // Debug: Cek data apa yang dikirim ke Supabase
+  // console.log("Payload order_menus:", payload);
+
+  const { error } = await supabase.from("order_menus").insert(payload);
+  if (error) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState,
+        _form: [],
+      },
+    };
+  }
+
+  redirect(`/order/${data.order_id}`);
 }
