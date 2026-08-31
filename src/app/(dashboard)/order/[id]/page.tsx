@@ -6,6 +6,12 @@ export const metadata = {
   title: "Ignaciasz Caffe | Detail Order",
 };
 
+declare global {
+  interface Window {
+    snap: any;
+  }
+}
+
 const DetailOrderPage = async ({
   params,
 }: {
