@@ -29,6 +29,7 @@ const MenuManagement = () => {
     handleChangePage,
     handleChangeSearch,
   } = useDataTable();
+
   const {
     data: menus,
     isLoading,

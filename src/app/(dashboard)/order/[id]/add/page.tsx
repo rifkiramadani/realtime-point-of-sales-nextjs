@@ -1,16 +1,16 @@
-import DetailOrder from "./_components/detail-order";
+import AddOrderItem from "./_components/add-order-item";
 
 export const metadata = {
   title: "Ignaciasz Caffe | Detail Order",
 };
 
-const DetailOrderPage = async ({
+const AddOrderItemPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
-  return <DetailOrder id={id} />;
+  return <AddOrderItem id={id} />;
 };
 
-export default DetailOrderPage;
+export default AddOrderItemPage;
