@@ -30,6 +30,7 @@ import { string } from "zod";
 import { updateReservation } from "../actions";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
 import Link from "next/link";
+import { useAuthStore } from "@/stores/auth-store";
 
 const OrderManagement = () => {
   const supabase = createClient();
@@ -150,6 +151,8 @@ const OrderManagement = () => {
     }
   }, [reservedState, refetch, refetchTables]);
 
+  const profile = useAuthStore((state) => state.profile);
+
   const reservedActionList = useMemo(
     () => [
       {
@@ -197,7 +200,7 @@ const OrderManagement = () => {
         </div>,
         <DropdownAction
           menu={
-            order.status === "reserved"
+            order.status === "reserved" && profile.role !== "kitchen"
               ? reservedActionList.map((item) => ({
                   label: item.label,
                   action: () =>
@@ -222,7 +225,7 @@ const OrderManagement = () => {
         />,
       ];
     });
-  }, [orders, currentLimit, currentPage, reservedActionList]);
+  }, [orders, currentLimit, currentPage, reservedActionList, profile.role]);
 
   return (
     <div className="w-full">
@@ -234,9 +237,11 @@ const OrderManagement = () => {
             onChange={(event) => handleChangeSearch(event.target.value)}
           />
           <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger
-              render={<Button variant={"outline"}>Create</Button>}
-            />
+            {profile.role !== "kitchen" && (
+              <DialogTrigger
+                render={<Button variant={"outline"}>Create</Button>}
+              />
+            )}
             <DialogCreateOrder
               refetch={refetch}
               onSuccess={handleCreateSuccess}
