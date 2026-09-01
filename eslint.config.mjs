@@ -16,10 +16,10 @@ const eslintConfig = [
 // konfigurasi eslint react hooks depencency yang tidak di butuhkan
 eslintConfig.push({
   rules: {
-    'react-hooks/exhautive-deps': 'off', //// konfigurasi eslint react hooks depencency yang tidak di butuhkan
-    'react/jsx-key': 'off', //menonaktifkan key pada props
-    '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-unused-vars': "off",
+    "react-hooks/exhautive-deps": "false", //// konfigurasi eslint react hooks depencency yang tidak di butuhkan
+    "react/jsx-key": "false", //menonaktifkan key pada props
+    "@typescript-eslint/no-explicit-any": "false",
+    "@typescript-eslint/no-unused-vars": "false",
   },
 });
 
