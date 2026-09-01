@@ -10,10 +10,10 @@ const nextConfig: NextConfig = {
 
   devIndicators: false,
   images: {
-    domains: [
-      "https://pjkpahtbzupvrnazvhas.storage.supabase.co",
-      "https://pjkpahtbzupvrnazvhas.supabase.co",
-    ],
+    // domains: [
+    //   "https://pjkpahtbzupvrnazvhas.storage.supabase.co",
+    //   "https://pjkpahtbzupvrnazvhas.supabase.co",
+    // ],
     remotePatterns: [
       {
         protocol: "https",
