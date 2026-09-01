@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@/lib/supabase/client";
+import { createClientSupabase } from "@/lib/supabase/default";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import DataTable from "@/components/common/data-table";
@@ -16,24 +16,18 @@ import {
   useState,
 } from "react";
 import DropdownAction from "@/components/common/dropdown-action";
-import { Ban, Link2Icon, Pencil, ScrollText, Trash2 } from "lucide-react";
+import { Ban, Link2Icon, ScrollText } from "lucide-react";
 import useDataTable from "@/hooks/use-data-table";
 import { cn } from "@/lib/utils";
-import { Table } from "@/validations/table-validation";
-import {
-  HEADER_TABLE_ORDER,
-  INITIAL_STATE_ORDER,
-} from "@/constants/order-constant";
+import { HEADER_TABLE_ORDER } from "@/constants/order-constant";
 import DialogCreateOrder from "./dialog-create-order";
 import { Order } from "@/validations/order-validation";
-import { string } from "zod";
 import { updateReservation } from "../actions";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
-import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
 
 const OrderManagement = () => {
-  const supabase = createClient();
+  const supabase = createClientSupabase();
   const {
     currentPage,
     currentLimit,
@@ -45,7 +39,7 @@ const OrderManagement = () => {
   const {
     data: orders,
     isLoading,
-    refetch,
+    refetch: refetchOrders,
   } = useQuery({
     queryKey: ["orders", currentPage, currentLimit, currentSearch],
     queryFn: async () => {
@@ -92,6 +86,28 @@ const OrderManagement = () => {
       return result.data;
     },
   });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("change-order")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "orders",
+        },
+        () => {
+          refetchOrders();
+          refetchTables();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase, refetchOrders, refetchTables]);
 
   const [selectedAction, setSelectedAction] = useState<{
     data: Order;
@@ -146,10 +162,10 @@ const OrderManagement = () => {
 
     if (reservedState?.status === "success") {
       toast.success("Update Reservation Success");
-      refetch();
+      refetchOrders();
       refetchTables();
     }
-  }, [reservedState, refetch, refetchTables]);
+  }, [reservedState, refetchOrders, refetchTables]);
 
   const profile = useAuthStore((state) => state.profile);
 
@@ -243,7 +259,6 @@ const OrderManagement = () => {
               />
             )}
             <DialogCreateOrder
-              refetch={refetch}
               onSuccess={handleCreateSuccess}
               tables={tables}
             />

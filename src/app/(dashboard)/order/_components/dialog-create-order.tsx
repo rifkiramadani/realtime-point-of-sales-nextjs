@@ -24,11 +24,9 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 const DialogCreateOrder = ({
-  refetch,
   onSuccess,
   tables,
 }: {
-  refetch: () => void;
   onSuccess?: () => void;
   tables: Table[] | undefined | null;
 }) => {
@@ -64,9 +62,8 @@ const DialogCreateOrder = ({
       toast.success("Create Order Success");
       form.reset();
       onSuccess?.();
-      refetch();
     }
-  }, [createOrderState, form, refetch, onSuccess]);
+  }, [createOrderState, form, onSuccess]);
 
   return (
     <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
