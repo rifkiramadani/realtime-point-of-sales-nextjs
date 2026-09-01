@@ -1,9 +1,11 @@
-const AdminDashboardPage = () => {
-  return (
-    <div>
-      <button>DashboardAdmin</button>
-    </div>
-  );
+import Dashboard from "./_components/dashboard";
+
+export const metadata = {
+  title: "Ignaciasz Caffe | Dashboard",
 };
 
-export default AdminDashboardPage;
+const DashboardPage = () => {
+  return <Dashboard />;
+};
+
+export default DashboardPage;

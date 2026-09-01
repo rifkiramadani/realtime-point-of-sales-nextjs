@@ -36,6 +36,7 @@ const OrderManagement = () => {
     handleChangePage,
     handleChangeSearch,
   } = useDataTable();
+
   const {
     data: orders,
     isLoading,
@@ -275,18 +276,6 @@ const OrderManagement = () => {
         onChangePage={handleChangePage}
         onChangeLimit={handleChangeLimit}
       />
-      {/* <DialogUpdateTable
-        open={selectedAction !== null && selectedAction?.type === "update"}
-        refetch={refetch}
-        currentData={selectedAction?.data}
-        handleChangeAction={handleChangeAction}
-      />
-      <DialogDeleteTable
-        open={selectedAction !== null && selectedAction?.type === "delete"}
-        refetch={refetch}
-        currentData={selectedAction?.data}
-        handleChangeAction={handleChangeAction}
-      /> */}
     </div>
   );
 };
