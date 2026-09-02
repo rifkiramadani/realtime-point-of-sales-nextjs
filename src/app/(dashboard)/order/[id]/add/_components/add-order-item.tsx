@@ -11,7 +11,7 @@ import CardMenu from "./card-menu";
 import LoadingCardMenu from "./loading-card-menu";
 import CartSection from "./cart";
 import { Cart } from "@/types/order";
-import { startTransition, useActionState, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { Menu } from "@/validations/menu-validation";
 import { addOrderItem } from "../../../actions";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
@@ -52,7 +52,7 @@ export default function AddOrderItem({ id }: { id: string }) {
     },
   });
 
-  const { data: order } = useQuery({
+  const { data: order, refetch: refetchOrder } = useQuery({
     queryKey: ["order", id],
     queryFn: async () => {
       const result = await supabase
@@ -123,6 +123,16 @@ export default function AddOrderItem({ id }: { id: string }) {
 
   const [addOrderItemState, addOrderItemAction, isPendingAddOrderItem] =
     useActionState(addOrderItem, INITIAL_STATE_ACTION);
+
+  useEffect(() => {
+    // Periksa status berdasarkan struktur action Anda
+    if (addOrderItemState?.status === "success") {
+      setCarts([]); // Kosongkan keranjang setelah berhasil
+      refetchOrder(); // Refetch data order terbaru dari database
+    } else if (addOrderItemState?.status === "error") {
+      toast.error("Failed to add order items");
+    }
+  }, [addOrderItemState, refetchOrder]);
 
   const handleOrder = async () => {
     const data = {

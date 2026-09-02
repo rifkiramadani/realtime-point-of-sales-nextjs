@@ -141,6 +141,10 @@ export async function addOrderItem(
     };
   }
 
+  // return {
+  //   status: "success",
+  // };
+
   redirect(`/order/${data.order_id}`);
 }
 
